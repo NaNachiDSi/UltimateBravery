@@ -169,13 +169,17 @@ def pick_runes():
             print("**Mini Runes:**", " | ".join(minirunepicks))
 
 def main():
-    pick_champ()
-    lanepick = pick_lane()
-    pick_spells(lanepick)
-    pick_starter(lanepick)
-    pick_boots()
-    pick_items(lanepick)
-    pick_runes()
+    repetitions = int(input("How many Players are going to play ? "))
+    for i in range(repetitions):
+        print("\n"*3,"Player", i+1, )
+        pick_champ()
+        lanepick = pick_lane()
+        pick_spells(lanepick)
+        pick_starter(lanepick)
+        pick_boots()
+        pick_items(lanepick)
+        pick_runes()
 
 if __name__ == "__main__":
     main()
+    input()
