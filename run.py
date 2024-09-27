@@ -14,11 +14,11 @@ class GameSetup:
         self.bigrunes = self.load_csv("BigRunes.csv")
         self.minirunes = self.load_csv("MiniRunes.csv")
         self.rune_files = {
-            "Resolve": self.load_csv("Resolve.csv"),
-            "Domination": self.load_csv("Domination.csv"),
-            "Inspiration": self.load_csv("Inspiration.csv"),
-            "Precision": self.load_csv("Precision.csv"),
-            "Sorcery": self.load_csv("Sorcery.csv")
+            "Resolve": "Resolve.csv",
+            "Domination": "Domination.csv",
+            "Inspiration": "Inspiration.csv",
+            "Precision": "Precision.csv",
+            "Sorcery": "Sorcery.csv"
         }
 
         # Lane order constant
@@ -68,24 +68,57 @@ class GameSetup:
     def pick_items(self, lanepick):
         if lanepick == "Support":
             support_item = self.pick_random_entries(self.support_items)[0]
-            itempicks = [item[0] for item in self.pick_random_entries(self.items, 4)]
+            itempicks = [item[0] for item in self.pick_random_entries(self.items, 5)]
             itempicks.append(support_item)
         else:
-            itempicks = [item[0] for item in self.pick_random_entries(self.items, 5)]
+            itempicks = [item[0] for item in self.pick_random_entries(self.items, 6)]
         print("**Item Build:**", " | ".join(itempicks))
 
-    # Simplified rune picking
+    # Adjusted rune picking logic
     def pick_runes(self):
-        bigrunepicks = [rune[0] for rune in self.pick_random_entries(self.bigrunes, 2)]
-        for rune in bigrunepicks:
-            rune_set = self.rune_files.get(rune.strip("'[] "), [])
-            if rune_set:
-                selected_runes = [self.pick_random_entries(rune_set)[0] for _ in range(min(4, len(rune_set)))]
-                print(f"**{rune}:**", " | ".join(selected_runes))
+        # First Pick
+        big_rune_1 = self.pick_random_entries(self.bigrunes)[0]  # Pick a big rune
+        print(f"**First Big Rune:** {big_rune_1}")
 
-        # Pick Mini Runes
-        minirunepicks = [self.pick_random_entries(self.minirunes)[i] for i in range(3)]
-        print("**Mini Runes:**", " | ".join(minirunepicks))
+        # Check if the key exists
+        if big_rune_1 in self.rune_files:
+            rune_set_1 = self.load_csv(self.rune_files[big_rune_1])
+            # Pick one element from each of the available columns
+            column_picks_1 = [random.choice(column) for column in zip(*rune_set_1)]  # Transpose and pick one from each
+            print(f"**First Rune Picks:** {' | '.join(column_picks_1)}")
+        else:
+            print(f"Error: {big_rune_1} is not a valid key in the rune files.")
+
+        # Second Pick
+        big_rune_2 = self.pick_random_entries(self.bigrunes)[0]  # Pick another big rune
+        print(f"**Second Big Rune:** {big_rune_2}")
+
+        # Check if the key exists
+        if big_rune_2 in self.rune_files:
+            rune_set_2 = self.load_csv(self.rune_files[big_rune_2])
+
+            # Ignore the first column and get the remaining columns
+            remaining_columns = list(zip(*rune_set_2))[1:]  # Skip the first column
+
+            # Filter out any empty columns
+            remaining_columns = [col for col in remaining_columns if any(col)]
+
+            # Check the number of available remaining columns
+            if len(remaining_columns) < 2:
+                print("Not enough remaining columns to sample from. Picking all available columns.")
+                selected_columns = remaining_columns  # Use all available columns
+            else:
+                selected_columns = random.sample(remaining_columns, 2)  # Pick two random columns
+
+            # Pick one element from each of the selected columns
+            column_picks_2 = [random.choice(column) for column in selected_columns]
+            print(f"**Second Rune Picks:** {' | '.join(column_picks_2)}")
+        else:
+            print(f"Error: {big_rune_2} is not a valid key in the rune files.")
+
+        # Third Pick
+        minirunepicks = [random.choice(column) for column in zip(*self.minirunes)]  # Pick one from each column
+        print(f"**Mini Runes Picks:** {' | '.join(minirunepicks)}")
 
     # Main game loop for up to 5 players with randomization, maintaining lane order
     def start_game(self):
