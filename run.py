@@ -1,6 +1,7 @@
 import csv
 import random
 
+
 class GameSetup:
     def __init__(self):
         # Load all necessary CSV data once during initialization
@@ -18,7 +19,7 @@ class GameSetup:
             "Domination": "Domination.csv",
             "Inspiration": "Inspiration.csv",
             "Precision": "Precision.csv",
-            "Sorcery": "Sorcery.csv"
+            "Sorcery": "Sorcery.csv",
         }
 
         # Lane order constant
@@ -26,7 +27,7 @@ class GameSetup:
 
     # Helper function to load CSV data
     def load_csv(self, filename):
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             return list(csv.reader(file))
 
     # Helper function to pick random entries
@@ -45,7 +46,9 @@ class GameSetup:
         if lanepick == "Jungle":
             spellpicks = [self.pick_random_entries(self.spells)[0], "Smite"]
         else:
-            spellpicks = [spell[0] for spell in self.pick_random_entries(self.spells, 2)]
+            spellpicks = [
+                spell[0] for spell in self.pick_random_entries(self.spells, 2)
+            ]
         print("**Summoner Spells:**", list(set(spellpicks)))
 
     # Picking starter items based on lane
@@ -84,7 +87,9 @@ class GameSetup:
         if big_rune_1 in self.rune_files:
             rune_set_1 = self.load_csv(self.rune_files[big_rune_1])
             # Pick one element from each of the available columns
-            column_picks_1 = [random.choice(column) for column in zip(*rune_set_1)]  # Transpose and pick one from each
+            column_picks_1 = [
+                random.choice(column) for column in zip(*rune_set_1)
+            ]  # Transpose and pick one from each
             print(f"**First Rune Picks:** {' | '.join(column_picks_1)}")
         else:
             print(f"Error: {big_rune_1} is not a valid key in the rune files.")
@@ -105,10 +110,14 @@ class GameSetup:
 
             # Check the number of available remaining columns
             if len(remaining_columns) < 2:
-                print("Not enough remaining columns to sample from. Picking all available columns.")
+                print(
+                    "Not enough remaining columns to sample from. Picking all available columns."
+                )
                 selected_columns = remaining_columns  # Use all available columns
             else:
-                selected_columns = random.sample(remaining_columns, 2)  # Pick two random columns
+                selected_columns = random.sample(
+                    remaining_columns, 2
+                )  # Pick two random columns
 
             # Pick one element from each of the selected columns
             column_picks_2 = [random.choice(column) for column in selected_columns]
@@ -117,7 +126,9 @@ class GameSetup:
             print(f"Error: {big_rune_2} is not a valid key in the rune files.")
 
         # Third Pick
-        minirunepicks = [random.choice(column) for column in zip(*self.minirunes)]  # Pick one from each column
+        minirunepicks = [
+            random.choice(column) for column in zip(*self.minirunes)
+        ]  # Pick one from each column
         print(f"**Mini Runes Picks:** {' | '.join(minirunepicks)}")
 
     # Main game loop for up to 5 players with randomization, maintaining lane order
